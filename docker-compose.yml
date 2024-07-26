@@ -11,7 +11,7 @@ services:
     restart: always
     build:
       context: .
-    container_name: cinema
+    container_name: comments
     command: make migrations
     depends_on:
       - postgres-db
@@ -32,21 +32,6 @@ services:
       - '80:80'
     depends_on:
       - web
-
-  redis:
-    restart: always
-    image: "redis:alpine"
-
-  celery:
-    restart: always
-    build:
-      context: .
-    command: make worker
-    depends_on:
-      - web
-      - redis
-      - postgres-db
-    env_file: .env
 
 
 volumes:

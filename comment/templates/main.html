@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каскадные комментарии на Bootstrap</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .comment-box {
+            margin-bottom: 1rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .comment-reply {
+            margin-left: 2rem;
+            border-left: 2px solid #dee2e6;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <form action="{% url 'comment' %}" method="post" enctype="multipart/form-data" id="formComment">
+        {% csrf_token %}
+        <input type="hidden" name="parent" id="contactparent" value="">
+        {{ form.username }}
+        {{ form.email }}
+        {{ form.homepage }}
+        {{ form.message }}
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+<div class="container mt-4">
+    <div class="comment-box border p-3">
+
+        <div class="comments">
+            {% for comment in comments %}
+                <div class="comment" id="comment-{{ comment.id }}">
+                <p><strong>{{ comment.username }}</strong> ({{ comment.date }}):</p>
+                <p>{{ comment.message }}</p>
+                <div class="comment-actions text-muted">
+                    <a href="" onclick="event.preventDefault(); addComment('{{ comment.id }}')">Ответить</a>
+                </div>
+
+                <!-- Отображение зависимых комментариев -->
+                <div class="replies">
+                    {% for dep in dep_comment %}
+                        {% if dep.parent.id == comment.id %}
+                            <div class="comment-reply border p-3 mt-3">
+                            <div class="comment-header">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" alt="avatar" class="rounded-circle mr-2">
+                                    <strong>{{ dep.username }}</strong>
+                                </div>
+                                <small>{{ dep.date|date:"d.m.y" }} в {{ dep.date|date:"H:i" }}</small>
+                            </div>
+                            {{ dep.id }}
+                            <p class="mt-2">{{ dep.message }}</p>
+                            <div class="comment-actions text-muted">
+                                <a href="" onclick="event.preventDefault(); addComment('{{ dep.id }}')">Ответить</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <script>
+                function addComment(id) {
+                    document.getElementById('contactparent').value = id;
+                }
+            </script>
+</body>
+</html>

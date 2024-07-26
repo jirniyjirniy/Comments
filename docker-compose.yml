@@ -1,0 +1,54 @@
+version: '3.10'
+
+services:
+  postgres-db:
+    restart: always
+    image: postgres:latest
+    container_name: postgres
+    env_file: .env
+
+  web:
+    restart: always
+    build:
+      context: .
+    container_name: cinema
+    command: make migrations
+    depends_on:
+      - postgres-db
+    env_file: .env
+    volumes:
+      - static_volume:/usr/src/app/static/
+      - media_volume:/usr/src/app/media/
+
+  nginx:
+    restart: always
+    build:
+      context: ./docker/nginx/.
+    container_name: nginx
+    volumes:
+      - static_volume:/usr/src/app/static/
+      - media_volume:/usr/src/app/media/
+    ports:
+      - '80:80'
+    depends_on:
+      - web
+
+  redis:
+    restart: always
+    image: "redis:alpine"
+
+  celery:
+    restart: always
+    build:
+      context: .
+    command: make worker
+    depends_on:
+      - web
+      - redis
+      - postgres-db
+    env_file: .env
+
+
+volumes:
+  static_volume:
+  media_volume:

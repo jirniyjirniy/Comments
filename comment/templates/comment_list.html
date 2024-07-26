@@ -1,0 +1,17 @@
+{% for comment in comments %}
+    <div class="comment mb-4 p-3 border rounded">
+        <h4>{{ comment.username }}</h4>
+        <p>{{ comment.message }}</p>
+        <small class="text-muted">{{ comment.date|date:'d.m.Y' }}
+            в {{ comment.date|date:'H:i' }}</small>
+        <div class="comment-actions text-muted mt-2">
+            <a href="#" class="btn btn-link"
+               onclick="event.preventDefault(); addComment('{{ comment.id }}')">Ответить</a>
+        </div>
+        {% if comment.get_children %}
+            <div class="children pl-4 mt-3">
+                {% include 'comment_list.html' with comments=comment.get_children %}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}

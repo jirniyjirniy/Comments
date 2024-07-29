@@ -1,9 +1,12 @@
 import django.forms as forms
+from captcha.fields import CaptchaField
 
 from comment.models import Comment
 
 
 class CommentForm(forms.ModelForm):
+    captcha = CaptchaField()
+
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
         # Настройка виджетов для полей

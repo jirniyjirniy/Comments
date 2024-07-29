@@ -17,12 +17,15 @@ run:
 gunicorn-run:
 	gunicorn core.wsgi:application -b 0.0.0.0:8000 --reload
 
+create-superuser:
+	$(MANAGE) shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin')"
+
 migrations:
 	$(MANAGE) makemigrations --no-input
 	$(MANAGE) migrate --no-input
 	$(MANAGE) flush --no-input
-	python seed/seed_script.py
 	$(MANAGE) collectstatic --no-input
+	$(MAKE) create-superuser
 	gunicorn core.wsgi:application -b 0.0.0.0:8000 --reload
 
 

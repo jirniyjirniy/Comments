@@ -84,6 +84,7 @@
         <div class="form-group">
             {{ form.message }}
         </div>
+        {{ form.captcha }}
         <div class="form-group">
             <label class="icon-upload" onclick="document.getElementById('id_image').click();">
                 <i class="fas fa-image"></i> Загрузить изображение
@@ -164,6 +165,12 @@
                                     <a href="#" class="btn btn-link"
                                        onclick="event.preventDefault(); addComment('{{ child.id }}')">Ответить</a>
                                 </div>
+                            
+                                {% if child.get_children %}
+                                    <div class="children pl-4">
+                                        {% include 'comment_list.html' with comments=child.get_children %}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
